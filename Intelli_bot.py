@@ -1,7 +1,7 @@
 from openai import ChatCompletion
 
 # API key
-api_key = "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"
+api_key = "PLACE_YOUR_OPENAI_API_KEY_HERE"
 # Variable to store the chat log
 chat_file = None
 
