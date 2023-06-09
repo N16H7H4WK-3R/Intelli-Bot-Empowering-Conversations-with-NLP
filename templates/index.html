@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Intelli_Bot</title>
+    <link rel="icon" href="{{ url_for('static', filename='robot(1).png') }}" type="image/png">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap-responsive.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <!-- JS for AJAX Calling & Chat_log Scrolling -->
+    <script>
+        $(document).ready(function () {
+            $('form').on('submit', function (event) {
+                event.preventDefault();
+                var user_input = $('#user_input').val();
+                $('#user_input').val('');
+                $('#chat_log').append('<p class="user_main"><i class="fas fa-user"></i> :  ' + '<span class="user">' + user_input + '</span></p>');
+                $.ajax({
+                    url: '/chat',
+                    data: { user_input: user_input },
+                    type: 'POST',
+                    beforeSend: function () {
+                        // Show typing animation
+                        $('#chat_log').append('<p class="awaiting_response1"><span class="awaiting_response2"></span><span class="awaiting_response3"></span></p>');
+                        scrollToBottomWithAnimation();
+                    },
+                    success: function (response) {
+                        // Remove typing animation
+                        $('#chat_log').find('.awaiting_response1').remove();
+                        $('#chat_log').find('.awaiting_response2').remove();
+                        $('#chat_log').find('.awaiting_response3').remove();
+                        // Add bot response
+                        $('#chat_log').append('<p class="bot_main"><i class="fas fa-robot"></i> :  ' + '<span class="bot">' + response.response + '</span></p>');
+                        scrollToBottomWithAnimation();
+                    }
+                });
+            });
+
+            // Function to scroll the chat log
+            function scrollToBottomWithAnimation() {
+                var chatLog = $('#chat_log');
+                chatLog.animate({ scrollTop: chatLog.prop("scrollHeight") }, 500);
+            }
+        });
+    </script>
+    <!-- JS for AJAX Calling & Chat_log Scrolling Ends -->
+    <!-- CSS Stylings -->
+    <style>
+        h1 {
+            color: #fff;
+            font-size: 20px;
+            font-weight: bold;
+            font-family: monospace;
+            letter-spacing: 7px;
+            cursor: pointer
+        }
+
+        h1 span {
+            transition: .5s linear
+        }
+
+        h1:hover span:nth-child(1) {
+            margin-right: 5px
+        }
+
+        h1:hover span:nth-child(1):after {
+            content: "Hello ";
+        }
+
+        h1:hover span:nth-child(3) {
+            margin-left: 10px
+        }
+
+        h1:hover span {
+            color: #fff;
+            text-shadow: 0 0 10px blue,
+                0 0 10px green,
+                0 0 40px black;
+        }
+    </style>
+    <style>
+        .awaiting_response1::after {
+            content: ".";
+            font-weight: bold;
+            margin-left: 5px;
+            color: red;
+            animation: loading 1s infinite
+        }
+        .awaiting_response2::after {
+            content: ".";
+            font-weight: bold;
+            margin-left: 5px;
+            color: green;
+            animation: loading 1s infinite
+        }
+        .awaiting_response3::after {
+            content: ".";
+            font-weight: bold;
+            margin-left: 5px;
+            color: blue;
+            animation: loading 1s infinite
+        }
+
+        @keyframes loading {
+            0% {
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                opacity: 0;
+            }
+        }
+        
+    </style>
+    <style>
+        .user_main {
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+
+        .bot_main {
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+    </style>
+    <style>
+        body {
+            background-color: #4B4A67;
+        }
+
+        #header {
+            padding-top: 10px;
+            height: 50px;
+            user-select: none;
+            text-align: center;
+            letter-spacing: 5px;
+            font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+        }
+
+        #chat_log {
+            height: 60vh;
+            overflow-y: scroll;
+            background-color: peachpuff;
+            border: 2px solid black;
+            padding: 20px;
+            margin: 50px 30px 10px 30px;
+            border-radius: 10px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        #chat_log::-webkit-scrollbar {
+            width: 8px;
+            background-color: peachpuff;
+            border-radius: 10px;
+        }
+
+        #chat_log::-webkit-scrollbar-thumb {
+            background-color: black;
+        }
+
+        form {
+            padding: 20px;
+            margin: 10px 30px 10px 30px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .user {
+            color: green;
+            letter-spacing: 2px;
+            font-weight: normal;
+        }
+
+        .bot {
+            color: black;
+            letter-spacing: 2px;
+            font-weight: normal;
+        }
+
+        #user_input {
+            height: 40px;
+            width: 90%;
+            border-radius: 5px;
+            outline: 1px solid black;
+            background-color: peachpuff;
+            padding: 15px 15px;
+            font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+        }
+
+        #send_button {
+            width: 8%;
+            height: 40px;
+            margin-left: 20px;
+            letter-spacing: 1px;
+            border-radius: 5px;
+            background-color: peachpuff;
+        }
+
+        #send_button:hover {
+            background-color: cornflowerblue;
+            border-radius: 5px;
+            outline: 2px solid black;
+        }
+
+        @media (max-width: 768px) {
+            #user_input {
+                height: 30px;
+                width: 70%;
+                font-size: 14px;
+                padding-left: 10px;
+                padding-right: 10px;
+            }
+
+            #send_button {
+                width: 25%;
+                height: 30px;
+                margin-left: 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
+    <!-- CSS Stylings Ends -->
+</head>
+
+<body>
+    <!-- Header -->
+    <nav class="navbar bg-dark border-bottom border-bottom-dark" data-bs-theme="dark">
+        <div class="container-fluid d-flex justify-content-center">
+            <span class="navbar-brand mb-0 h1" id="header">
+                <h1><span></span><span>I'm </span><span>Intelli_Bot </span><span class="fas fa-robot"></span></h1>
+            </span>
+        </div>
+    </nav>
+    <!-- Header Ends -->
+    <!-- Chat log -->
+    <div id="chat_log"></div>
+    <!-- Chat log Ends -->
+    <!-- User Input Form -->
+    <form>
+        <input type="text" id="user_input" placeholder="Enter Your Message Here....." autofocus>
+        <input type="submit" id="send_button" value="Send">
+    </form>
+    <!-- User Input Form Ends -->
+</body>
+
+</html>
