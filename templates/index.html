@@ -13,38 +13,56 @@
     <!-- JS for AJAX Calling & Chat_log Scrolling -->
     <script>
         $(document).ready(function () {
-            $('form').on('submit', function (event) {
+            $(document).on('submit', 'form', function (event) {
                 event.preventDefault();
-                var user_input = $('#user_input').val();
+                var user_input = $('#user_input').val().trim();
+                if (user_input === '') {
+                    alert("Please enter your message before sending!!");
+                    return
+                }
                 $('#user_input').val('');
-                $('#chat_log').append('<p class="user_main"><i class="fas fa-user"></i> :  ' + '<span class="user">' + user_input + '</span></p>');
+                appendUserMessage(user_input);
+                sendUserInput(user_input);
+            });
+            function appendUserMessage(message) {
+                $('#chat_log').append('<p class="user_main"><i class="fas fa-user"></i> :  <span class="user">' + message + '</span></p>');
+                scrollToBottomWithAnimation();
+            }
+            
+
+            function sendUserInput(input) {
+                showAwaitingResponseAnimation();
                 $.ajax({
                     url: '/chat',
-                    data: { user_input: user_input },
+                    data: { user_input: input },
                     type: 'POST',
-                    beforeSend: function () {
-                        // Show typing animation
-                        $('#chat_log').append('<p class="awaiting_response1"><span class="awaiting_response2"></span><span class="awaiting_response3"></span></p>');
-                        scrollToBottomWithAnimation();
-                    },
                     success: function (response) {
-                        // Remove typing animation
-                        $('#chat_log').find('.awaiting_response1').remove();
-                        $('#chat_log').find('.awaiting_response2').remove();
-                        $('#chat_log').find('.awaiting_response3').remove();
-                        // Add bot response
-                        $('#chat_log').append('<p class="bot_main"><i class="fas fa-robot"></i> :  ' + '<span class="bot">' + response.response + '</span></p>');
-                        scrollToBottomWithAnimation();
+                        removeAwaitingResponseAnimation();
+                        appendBotResponse(response.response);
                     }
                 });
-            });
+            }
 
-            // Function to scroll the chat log
+            function appendBotResponse(response) {
+                $('#chat_log').append('<p class="bot_main"><i class="fas fa-robot"></i> :  <span class="bot">' + response + '</span></p>');
+                scrollToBottomWithAnimation();
+            }
+
+            function showAwaitingResponseAnimation() {
+                $('#chat_log').append('<p class="awaiting_response"><span class="awaiting_response2"></span><span class="awaiting_response3"></span></p>');
+                scrollToBottomWithAnimation();
+            }
+
+            function removeAwaitingResponseAnimation() {
+                $('#chat_log').find('.awaiting_response').remove();
+            }
+
             function scrollToBottomWithAnimation() {
                 var chatLog = $('#chat_log');
-                chatLog.animate({ scrollTop: chatLog.prop("scrollHeight") }, 500);
+                chatLog.animate({ scrollTop: chatLog.prop('scrollHeight') }, 500);
             }
         });
+
     </script>
     <!-- JS for AJAX Calling & Chat_log Scrolling Ends -->
     <!-- CSS Stylings -->
