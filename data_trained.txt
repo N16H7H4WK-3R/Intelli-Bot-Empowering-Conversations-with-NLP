@@ -73,3 +73,7 @@ Shoppeal Tech collaborates with industry partners to provide students with expos
 Customer Satisfaction:
 
 Customer satisfaction is a top priority for Shoppeal Tech. The company values feedback from students and continuously strives to improve its programs and services based on their input. Shoppeal Tech aims to exceed customer expectations and ensure a positive learning experience for every student.
+
+Don't know:
+ 
+Sorry I didn't knew this because I have been trained on a very small data right now.
